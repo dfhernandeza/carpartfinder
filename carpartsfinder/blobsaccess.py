@@ -8,7 +8,7 @@ from azure.core import credentials
 # created after the application is launched in a console or with Visual Studio,
 # the shell or application needs to be closed and reloaded to take the
 # environment variable into account.
-CONNECT_STR = "DefaultEndpointsProtocol=https;AccountName=cs210032000a776ae54;AccountKey=DjY9SC9We1+iC1aBIPX/gRq9++RxXCsVuBv/pit5Ak2rvyfciNVuIdcNoIhh8EZKQnS3HIyZsS359HZ5vpaR7Q==;EndpointSuffix=core.windows.net"
+CONNECT_STR = <ENDPOINT>
 
 # Create a blob client using the local file name as the name for the blob
 blob_service_client = BlobServiceClient.from_connection_string(CONNECT_STR)
