@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Item
+{% endblock %}
+
+{% block main %}
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://use.fontawesome.com/6e865d9abf.js"></script>
+    <style>
+      
+        @media(min-width:768px){
+              nav{
+                  height: 10%;
+              }  
+              body{
+                height: 100vh!important;
+            }
+            main{
+                height: 90%;
+            }        
+        }
+        @media(max-width:768px){
+            
+        }
+        @media(min-width:576px){
+            .custom-h{
+                height: 100%!important;
+            }        
+        }
+      
+        .back{
+            background-color: rgba(0, 0, 0, 0.4); 
+            color: rgba(0, 0, 0, 0.6);
+        }
+        .carousel-control-prev-icon,.carousel-control-next-icon{
+            background-color: grey;
+        }
+        .ffr{
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<div class="row custom-h">
+    <div class="col-md-8 h-100">
+       <div class="d-flex justify-content-center align-items-center h-100 w-100">
+        <div id="carouselExampleControls" class="carousel slide h-100 w-100" data-bs-ride="carousel">
+            <div class="carousel-inner h-100 w-100">
+              <div class="carousel-item active h-100 w-100">
+                <div class="d-flex h-100 w-100 justify-content-center align-items-center">
+                    <img class="w-50 h-50"  src="{{part.pictures[0].url}}">
+                </div>
+              </div>
+              {%for i in range(1, part.pictures|length) %}
+              <div class="carousel-item h-100 w-100">
+                <div class="d-flex h-100 w-100 justify-content-center align-items-center">
+                    <img class="w-50 h-50"  src="{{part.pictures[i].url}}">                    
+                </div>  
+              </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>    
+    </div>
+    <div class="col-md-4 h-100 pe-5 ffr pt-3 mb-3">
+        <div class="fs-2 fw-bolder">{{part.part_name}}</div>
+        <div class="fs-4 text-success fw-bolder">{{ "${:,.2f}".format(part.price) }}</div>
+        <div class="fs-5 overflow-auto" style="height: 13%;">{{part.description}}</div>
+        <hr>
+        <h4>Features</h4>
+            <div class="overflow-auto" style="height:13%;">
+                {% for item in part.features %}
+                <div><i class="fa-solid fa-diamond text-success me-2"></i> {{item.name + ' : ' + item.value}} </div>
+                 {% endfor %}
+            </div>       
+        <hr> 
+        <h4>Compatibility</h4>  
+        <div class="overflow-auto" style="height:13%;">
+            {% for item in part.compatibility %}
+            <div><i class="fa-solid fa-diamond text-danger me-2"></i>  {{item.make + ' / ' + item.car_model + ' / ' + item.year}} </div>
+             {% endfor %}
+        </div>        
+         <hr>
+        <h4>Seller</h4> 
+        <div><a href="{{'/sellerinfo?id=' + part.sellerinfo.id}}">{{part.sellerinfo.first_name + ' ' + part.sellerinfo.last_name}}</a></div>
+    </div>
+</div>
+
+
+  
+
+    
+{% endblock %}

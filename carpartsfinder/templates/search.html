@@ -1,0 +1,290 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    <head>
+        <style>
+           .not-outline:focus{
+               outline: none;
+           }
+            select{
+                background-color: transparent;
+                border: none;
+            }
+            hr{
+                margin-right: -16px;
+                margin-left: -16px;
+            }
+            .search{
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            }
+            .line{
+                
+                
+                border-top-style:solid ;
+                border-top-width: 1px;
+                border-color: lightgray;
+            }
+            @media(min-width:576px){
+                .top-div{
+                    height: 22%;
+                    
+                }
+                .search{
+                    width: 75%!important;
+                }
+                .options{
+                    width: 75%!important;
+                    padding-right: 3rem!important ;
+                    padding-left: 3rem!important ;
+                }
+                .cont-results{
+                    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                    height: 12rem;
+                    border-radius: 8px;
+                    width: 85%;
+                    margin-left:auto;
+                    margin-right: auto ;
+                    color: grey;
+                    font-family:Verdana, Geneva, Tahoma, sans-serif;
+                }
+                .picture{
+                    margin-right: auto;
+                    margin-left: auto;
+                }
+            }
+            @media (max-width:576px){
+                .cont-results{
+                    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                    height: 6rem;
+                    border-radius: 8px;
+                    width: 95%;
+                    margin-left:auto;
+                    margin-right: auto ;
+                    font-size: x-small;
+                    color: grey;
+                    font-family:Verdana, Geneva, Tahoma, sans-serif;
+                }
+                .picture{
+                    height: 35px;
+                    width: 35px;
+                }
+                .top-div{
+                    height: 20%;
+                    
+                }
+                .search{
+                    width: 95%!important; 
+                }
+                .options{
+                    width: 95%!important;
+                    padding-right: 1rem!important ;
+                    padding-left: 1rem!important ;
+                }
+                select{
+                    font-size: x-small;
+                }
+                .compatibility{
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+                    font-size: 7px;
+                    font-weight: bold;
+                }
+               
+            }
+
+            body{
+                height: 100vh!important;
+            }
+            main{
+                height: 90%;
+            }
+            @media(min-width:768px){
+                  nav{
+                      height: 10%;
+                  }          
+            }
+            @media(max-width:768px){
+                
+            }
+          
+        </style>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="/static/functions.js"></script>
+        <link rel="stylesheet" href="/static/jqueryui/jquery-ui.min.css">
+        <script src="/static/jqueryui/jquery-ui.min.js"></script>
+    </head>
+    <div class="top-div py-3">
+        <form method="get" class="h-100" action="/search" id="searchForm">
+            <div class="row h-100 align-items-center">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="search text bg-white rounded-pill border-0 p-2 mx-auto">               
+                        
+                        <i class="fa-solid fa-magnifying-glass mx-2"></i>
+                        <input class="border-0 w-75 not-outline" id="q" placeholder="Search for car parts" autocomplete="off" name="q" value="{{q}}">
+                        
+                        
+                        </div>  
+                    </div>
+                    <div class="col-12 mt-2">
+                        <div class="d-flex justify-content-between options mx-auto">
+                            <select name="make" id="make">
+                                <option value="">- MAKE -</option>
+                                {% for item in cars %}
+                                {% if idmake == item['id'] %}
+                                <option selected value="{{ item.id }}">{{ item.make }}</option>
+                                {% else %}
+                                <option value="{{ item.id }}">{{ item.make }}</option>
+                                {% endif %}
+                                
+                                {% endfor %}
+                            </select> 
+                            {% if not models %}
+                            <select name="model" id="model" disabled>
+                                <option value="">- MODEL -</option>                               
+                            </select>
+                            {% else %}
+                            <select name="model" id="model">
+                                <option value="">- MODEL -</option>
+                                {% for item in models %}
+                                {% if idmodel == item.id %}
+                                <option selected value="{{ item.id }}">{{ item.model }}</option>
+                                {% else %}
+                                <option  value="{{ item.id }}">{{ item.model }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% endif %}
+                            
+                            {%if not years and not models%}
+                            <select name="year" id="year" disabled>
+                                <option value="">- YEAR -</option>                            
+                            </select> 
+                            {% elif not idyear %}
+                            <select name="year" id="year">
+                                <option value="">- YEAR -</option>
+                                {% for item in years %}
+                               
+                                <option  value="{{ item.id }}">{{ item.text }}</option>
+                                
+                                {% endfor %}
+                            </select>
+                            {% else %}
+                            <select name="year" id="year">
+                                <option value="">- YEAR -</option>
+                                {% for item in years %}
+                                {% if idyear == item.id %}
+                                <option selected value="{{ item.id }}">{{ item.text }}</option>
+                                {% else %}
+                                <option  value="{{ item.id }}">{{ item.text }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" hidden />
+        </form>
+    </div>
+    <div class="line mb-3"></div>
+    {% for part in results %}
+    <div class="cont-results container-fluid p-2 mb-4">
+        <div class="row h-100">
+            <div class="col-6 fw-bold h-100">
+                <div class="row h-50">
+                    <div class="col-3 h-100">
+                        <div class="h-100 w-100 d-flex justify-content-center">
+                            <div id="carouselExampleControls" class="carousel slide h-100 w-100" data-bs-ride="carousel">
+                                <div class="carousel-inner h-100 w-100">                                    
+                                  <div class="carousel-item active h-100 w-100">
+                                    <img class="picture d-block w-100 h-100" src="{{part.pictures[0].url}}">
+                                  </div>
+                                  {% for i in range(1, part.pictures|length) %}
+                                  <div class="carousel-item h-100 w-100">
+                                    <img class="picture d-block w-100 h-100" src="{{part.pictures[i].url}}">
+                                  </div>
+                                  {% endfor %}
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                  <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                  <span class="visually-hidden">Next</span>
+                                </button>
+                              </div>
+
+
+
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col-9">
+                        <div class="row h-25">
+                            <div class="col-12"><a href="/partdetails?id={{part.id}}">{{ part.part_name }}</a></div>
+                        </div>
+                        <div class="row h-25">
+                            <div class="col-12">{{ "${:,.2f}".format(part.price) }} </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row h-50">
+                    <div class="col-12 h-100" style="font-size: x-small;">
+                        <div class="h-100 overflow-auto">
+                            {{part.description}}
+                        </div>
+                    
+                    </div>
+                </div>
+              
+            </div>
+            <div class="col-6 h-100">
+                <div class="h-25">Compatibility</div>
+                <div class="h-50 overflow-auto">
+                    
+                    <ul class="compatibility">
+                        {% for item in part.compatibility %}
+                    <li>
+                        {{ item.make + " / " + item.car_model + " / " + item.year }}
+                    </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="h-25"><a href="{{'/sellerinfo?id=' + part.iduser}}"><i class="fa-solid fa-address-card"></i> Contact Seller </a></div>
+               <!--
+                <div class="h-25"><a href="{{'https://www.google.com/maps/dir/?api=1&destination=' + part.urladdress }}">Contact </a></div>
+               --> 
+                
+            </div>
+        </div>
+       
+    </div>
+    {% endfor %}
+    <script>
+        
+        $(document).ready(function(){
+            $.ajax({
+                url:"/getautocomplete",
+                type: "GET",
+                async: false,
+                dataType: "json",
+                success: function(response){
+                    $('#q').autocomplete({
+                        source: response.map(a => a.part_name)
+                    });
+                }
+            })
+
+        });
+    </script>
+{% endblock %}

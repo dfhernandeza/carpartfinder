@@ -1,0 +1,320 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Car Manager
+{% endblock %}
+
+{% block main %}
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/functions.js"></script>
+    <style>
+        .btn-delete{
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 3px;
+            padding-right: 3px;
+        } 
+    </style>
+</head>
+    <h5 class="mt-3 ms-1 mb-3">New Item</h4>
+    <form id="newPartForm" class="user-info-container p-4 mt-3" method="post" action="/upload" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-sm-6 mb-2">                
+                <input name="part_name" autocomplete="off" class="partsInput" placeholder="Name" type="text">
+            </div>
+            <div class="col-sm-6 mb-2">                
+                <input name="price" autocomplete="off" placeholder="Price" class="partsInput" type="number">        
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+               <textarea onkeyup="textAreaAdjust(this)" class="partsInput overflow-hidden" rows="1" name="description" placeholder="Description"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <label class="form-label">
+                    Pictures
+                </label>
+                <input type="file" name="file" id="file" multiple class="w-100">
+                <div id="pics">
+
+                </div>
+                <div class="alert alert-warning alert-dismissible fade show d-none mb-2" role="alert" id="alterta">
+                    <strong id="textAltert">Only Images Allowed</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+               <h6 class="text-info">Compatibility</h6>
+               <select class="partsInput mb-2" id="makeSelect">
+                   <option value="">- Make -</option>
+                   {% for item in cars %}
+                   <option value="{{ item.id }}">{{item.make}}</option>
+                   {% endfor %}
+               </select>
+               <select class="partsInput mb-2" id="modelSelect">
+                    <option value="">- Model -</option>               
+               </select>
+               <select class="partsInput mb-2" id="yearSelect">
+                    <option value="">- Year -</option>
+               </select>
+               <input class="btn btn-primary w-25 mb-2" value="Add" id="addCompatibilityBtn" type="button">
+               <div id="compatibilityContainer">
+                
+               </div>
+            </div>
+        </div>
+      
+        <hr>     
+        <div class="row mb-2">
+            <div class="col-sm-12">
+               <h6 class="text-info">Features</h6>
+               <div class="row">
+                   <div class="col-6">
+                    <input type="text" class="partsInput mb-3" placeholder="Name" id="featureName">
+                   </div>
+                   <div class="col-6">
+                    <input type="text" class="partsInput mb-3" placeholder="Value" id="featureValue">
+                    </div>
+               </div>              
+               <div class="row">
+                <div class="col-12">
+                 <input type="text" class="partsInput mb-3" placeholder="Description" id="featureDescription">
+                </div>                
+            </div>   
+               <input class="btn btn-primary w-25 mb-2 d-block" value="Add" id="addFeatureBtn" type="button">
+               <div id="featuresContainer">
+                
+               </div>
+            </div>
+        </div>
+      
+        <hr>           
+        <input type="submit" class="btn bg-green" value="Submit" id="submitBtn">
+        <div id="loading" class="spinner-border text-primary" role="status" style="display: none;">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+    </form>
+    <script>
+        var features = [];
+        var compatibilityList = [];
+        // Event listeners
+        $(document).ready(function(){
+            $('#newPartForm').validate({
+                rules:{
+                    part_name:"required",
+                    price: "required",
+                    description: "required",
+                    file: "required"
+                },
+                messages:{
+                    part_name:"You must provide a name",
+                    price: "You must provide a price",
+                    description : "You must describe",
+                    file: "You must upload at least one image"
+                },
+                submitHandler: function(form){
+                    
+                    var pics = new FormData();
+                    var imagen = document.getElementById("file");
+                    $(imagen.files).each(function(i, item){
+                       var name = item.name;
+                     pics.append(name, item)                   
+                    });
+                    //pics.append("files", imagen.files)     
+                    
+                   /* var compatibility = [];
+                    $('.compatibilityItem').each(function(i, item){
+                        var x = {id_car_make : $(item).data('idcarmake'),
+                                 id_car_model : $(item).data('idmodel'),
+                                 id_year : $(item).data('idyear')
+                             }
+                        compatibility.push(x);
+                    });*/
+                    var object = {
+                        part_name : form.part_name.value,
+                        price: form.price.value,
+                        description: form.description.value,
+                        compatibility : compatibilityList,
+                        features: features
+                    };
+                    pics.append('object', JSON.stringify(object) )
+                    if($('#compatibilityContainer').children().length == 0)
+                    {
+                        $('#compatibilityContainer').html('<label class="error" for="compatibility">You must choose at least one model</label>')
+                    }
+                    else{
+                        $('#submitBtn').hide();
+                        $('#loading').show(function(){
+                            $.ajax({
+                                
+                                url: "/upload",
+                                type: 'POST',
+                                async: false,
+                                contentType: false,
+                                processData: false,
+                                data:pics,
+                                success: function (response) {                  
+                                  response === true ? window.location.replace("/") : alert("Error")                                  
+                                },
+                            });
+
+
+                        });
+                         
+                    }
+                   
+                }
+            });
+
+        })
+        $(document).on('change','#file',function(){
+            var imagen = document.getElementById("file")
+            const[file] = imagen.files
+            var html = '';
+            var ok = true;
+            $(imagen.files).each(function(i, item){
+                
+                if(item.type.split('/')[0] != 'image'){
+                    
+                    ok = false;
+                }
+                if (ok){
+                    html = html + `<img width="80" class="me-1 mb-1" height="80" id="pic" src="${URL.createObjectURL(item)}">`;
+                }             
+               
+              
+            })
+            if (ok){
+                $('#pics').html(html)
+            }
+            else{
+                imagen.value = "";
+                $('#alterta').removeClass('d-none');
+            }
+            
+        })
+        $(document).on('change','#makeSelect',function(){
+            var $this = $(this);            
+            $.ajax({
+                url: "/getModels",
+                type: 'POST',
+                async: false,
+                dataType: 'json',
+                data:{
+                    idmake : $this.val()
+                },
+                success: function (data) {                    
+                  $('#modelSelect').append(populateSelect(data))  
+                    
+                },
+            });
+        });  
+        $(document).on('change','#modelSelect',function(){
+            var $this = $(this);            
+            $.ajax({
+                url: "/getYears",
+                type: 'POST',
+                async: false,
+                dataType: 'json',
+                data:{
+                    idmodel : $this.val()
+                },
+                success: function (data) {                    
+                  $('#yearSelect').append(populateSelect(data))  
+                    
+                },
+            });
+        }); 
+        $(document).on('click','#addCompatibilityBtn',function(){
+            $('#compatibilityContainer').find('.error').remove();
+            var idCarMake = $('#makeSelect option:selected');
+            var idModel = $('#modelSelect option:selected');
+            var idYear = $('#yearSelect option:selected');
+            if(idCarMake.val() != '' && idModel.val() != '' && idYear.val() != '')
+            {
+                var compatibility = new Compatibility(idCarMake.val(), idModel.val(), idYear.val(), idCarMake.text(), idModel.text(), idYear.text());
+                compatibilityList.push(compatibility);
+                addcompatibility();
+            }
+        })
+        $(document).on('click','#addFeatureBtn', function(){   
+            if($('#featureName').val() && $('#featureValue').val() && $('#featureDescription').val())
+            {
+                var feature = new Feature($('#featureName').val(), $('#featureValue').val(), $('#featureDescription').val())
+                features.push(feature);
+                addFeatures();
+                $('#featureName,#featureValue,#featureDescription').val('');
+            }           
+        });
+        $(document).on('click','.delete-compatibility',function(){
+            var index = $(this).data('id');
+            compatibilityList.splice(index,1);
+            addcompatibility();
+        });
+        $(document).on('click','.delete-feature',function(){
+            var index = $(this).data('id');
+            features.splice(index,1);
+            addFeatures();
+        });
+        
+        function textAreaAdjust(element) {
+            element.style.height = "1px";
+            element.style.height = (25+element.scrollHeight)+"px";
+          }
+        function Feature(name, value, description){
+            this.name = name;
+            this.value = value;
+            this.description = description;
+        }
+        function Compatibility(id_car_make, id_car_model, id_year, carMake, carModel, year){
+            this.id_car_make = id_car_make;
+            this.id_car_model = id_car_model;
+            this.id_year = id_year;
+            this.carMake = carMake,
+            this.carModel = carModel;
+            this.year = year;
+        }    
+        function addFeatures(){
+            var html ='';
+            for (var i = 0; i < features.length; i++)
+            {
+                html = html + `<div class="row">
+                                <div class="col-3">${features[i].name}</div>
+                                <div class="col-3">${features[i].value}</div>
+                                <div class="col-5">${features[i].description}</div>
+                                <div class="col-1">
+                                    <div class="btn-delete btn btn-danger d-inline delete-feature" data-id="${i}">
+                                        <i class="fa-solid fa-trash-can fa-xs"></i>
+                                    </div>
+                                </div>
+                               </div>`;
+                
+            }
+            $('#featuresContainer').html(html);
+        }
+        function addcompatibility(){
+            var html ='';
+            for (var i = 0; i < compatibilityList.length; i++)
+            {
+                html = html + `<div class="row">
+                                <div class="col-6">
+                                    <div class="compatibilityItem mb-2">${compatibilityList[i].carMake + " / " + compatibilityList[i].carModel + " / " + compatibilityList[i].year}</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="btn-delete btn btn-danger d-inline delete-compatibility" data-id="${i}">
+                                        <i class="fa-solid fa-trash-can fa-xs"></i>
+                                    </div>
+                                </div>
+                               </div>`;
+                
+            }
+            $('#compatibilityContainer').html(html);
+        }
+    </script>
+{% endblock %}

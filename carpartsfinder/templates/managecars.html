@@ -1,0 +1,546 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Car Manager
+{% endblock %}
+
+{% block main %}
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/functions.js"></script>
+</head>
+    
+
+    <div class="container-fluid p-4">
+            <form id="newCarForm" class="w-75" method="post" action="/newcarmake">
+                <div class="row">
+                    <div class="col-8">
+                        <input autofocus class="form-control mb-2 text-uppercase" autocomplete="off" id="make" name="make" type="text" placeholder="New Car Make">
+                    </div>
+                    <div class="col-4">
+                        <input type="submit"  class="btn bg-green text-white mb-3" value="Submit" id="newMakeBtn">
+                    </div>
+                    
+                </div>
+        
+            </form>
+            <div class="row 2d" style="display: none;">
+                <div class="col-md-6">
+                    <form id="editCarMakeForm" method="post" action="/editcarmake">
+                        <div class="row">
+                            <div class="col-8">
+                                <input class="d-none" id="id" name="id">
+                                <input class="form-control mb-2 text-uppercase" autocomplete="off" id="makeUpdate" name="make" type="text" placeholder="Car Make">
+                            </div>
+                            <div class="col-4">
+                                <input type="submit"  class="btn bg-green text-white mb-3" value="Update" id="editMakeBtn">
+                            </div>
+                            
+                        </div>
+                
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <form id="newCarModelForm" method="post" action="newcarmodel">
+                        <div class="row">
+                            <div class="col-8">
+                                <input class="d-none" id="carmakeid" name="carmakeid">
+                                <input class="form-control mb-2 text-uppercase" autocomplete="off" id="newModel" name="carmodel" type="text" placeholder="New Car Model">
+                            </div>
+                            <div class="col-4">
+                                <input type="submit"  class="btn bg-green text-white mb-3" value="Submit" id="newModelBtn">
+                            </div>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row 3d" style="display: none;">
+                <div class="col-md-6">
+                    <form id="editModelForm" method="post" action="/editcarmodel">
+                        <div class="row">
+                            <div class="col-8">
+                                <input class="d-none" id="idmodel" name="idmodel">
+                                <input class="form-control mb-2 text-uppercase" autocomplete="off" id="modelUpdate" name="carmodel" type="text" placeholder="Car Model">
+                            </div>
+                            <div class="col-4">
+                                <input type="submit"  class="btn bg-green text-white mb-3" value="Update" id="editModelBtn">
+                            </div>
+                            
+                        </div>
+                
+                    </form>
+                </div>
+            
+                
+                <div class="col-md-6">
+                    <form id="addModelYearForm" method="post" action="/newyearmodel">
+                        <div class="row">
+                            <div class="col-8">
+                                <input class="d-none" id="id_model" name="id_model">
+                                <select class="form-control mb-2" name="id_year" id="id_year">
+                                    <option value="">YEAR</option>
+                                    {% for item in years %}
+                                        <option value="{{ item.id }}">{{ item.text }}</option>
+                                    {% endfor %}
+                                </select>
+                                
+                            </div>
+                            <div class="col-4">
+                                <input type="submit"  class="btn bg-green text-white mb-3" value="Submit">
+                            </div>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>    
+            <div class="mx-auto w-100 p-4 user-info-container mt-3" id="mainContainer">
+                 <div class="w-100 mx-auto fila">
+            
+                    <div class="row align-items-end">
+                        <div class="col-8">
+                            <div class="form-label label-user-info" id="header">
+                                CAR MAKE
+                            </div>
+                        
+                        </div>
+                        <div class="col-4" id="backDiv">
+                                            
+                        </div>
+                    </div>
+          
+                    <hr>
+                  </div>
+    
+            </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="btnConfirmDelete" class="btn btn-primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <script>
+        var email;
+        var idmake;
+        var idmodel;
+        var make;
+        var idyeardelete;
+        var idmodeldelete;
+        var idmakedelete;
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+            keyboard: false
+        });
+        $(document).ready(function(){
+            getCarMakes();  
+                        
+        });
+        function refreshtooltips()
+        {
+            $(".tooltip").tooltip("hide");
+            $('[data-bs-toggle="tooltip"]').tooltip({trigger:'hover'});       
+        }
+        //validations
+        validateYearForm();
+        $('#newCarForm').validate({
+            rules:{
+                make: {
+                    required: true,
+                    remote: '/carmakevalidation'}
+            },
+            submitHandler: function(form){
+                submit(form.action, form, getCarMakes)                      
+            }
+        })
+        $('#newCarModelForm').validate({
+            rules:{
+                carmodel: {
+                    required: true,
+                    remote: {
+                        url: '/carmodelvalidation',
+                        type: "post",
+                        data:{
+                            carmodel : function(){return $('#newModel').val();},
+                            carmakeid : function(){return $('#carmakeid').val();}
+                        }
+                    } 
+                }
+            },
+            messages:{
+                carmodel:{
+                    required: "Enter a Car Model",
+                    remote: "This model already exists"
+                }
+            },
+            submitHandler: function(form){
+                var id = $('#carmakeid').val();
+                submit(form.action, form, getcarmodels, id)    
+                /*$.ajax({
+                    url: "/newcarmodel",
+                    type: 'POST',
+                    async: false,
+                    dataType: 'json',
+                    data:$('#newCarModelForm').serialize(),
+                    success: function () { 
+                                          
+                        getcarmodels(id)                        
+                    },
+                }); */               
+            }
+        })
+        function validateYearForm(){
+            $('#addModelYearForm').validate({
+                rules:{
+                    id_year: {
+                        required: true,
+                        remote: {
+                            url: '/modelyearvalidation',
+                            type: "post",
+                            data:{
+                                idyear : function(){return $('#id_year').val();},
+                                idmodel : function(){return $('#id_model').val();}
+                            }
+                        } 
+                    }
+                },
+                messages:{
+                    id_year:{
+                        required: "Select a Year",
+                        remote: "This Year was already added"
+                    }
+                },
+                submitHandler: function(form){
+                    var id = $('#id_model').val();
+                    submit(form.action, form, getModelYears, id)                   
+                }
+            })
+        }
+        
+        $('#editModelForm').validate({
+            rules:{
+                carmodel: {
+                    required: true,
+                    remote: {
+                        url: '/carmodelvalidation',
+                        type: "post",
+                        data:{
+                            carmodel : function(){return $('#modelUpdate').val();},
+                            carmakeid : function(){return $('#carmakeid').val();}
+                        }
+                    } 
+                }
+            },
+            messages:{
+                carmodel:{
+                    required: "Enter a Car Model",
+                    remote: "This model already exists"
+                }
+            },
+            submitHandler: function(form){
+                var id = $('#id_model').val();
+                submit(form.action, form, fadeinfadeoutModel)                          
+            }
+        })       
+        $('#editCarMakeForm').validate({
+            rules:{
+                make: {
+                    required: true,
+                    remote: '/carmakevalidation'}
+            },
+            messages:{
+                make:{
+                    required: "Enter a Car Make",
+                    remote: "This Make already exists"
+                }
+            },
+            submitHandler: function(form){
+                submit(form.action, form, fadeinfadeoutMake)                              
+            }
+        })
+       
+        $(document).on('click', '.nextBtn', function(){
+            var $this = $(this);
+            idmake = $this.data('id');
+            make = $this.data('make');
+            $('#mainContainer, #newCarForm').fadeOut(function(){
+                getcarmodels(idmake);
+                $('#makeUpdate').val(make);
+                $('#id,#carmakeid').val(idmake);
+                $('#header').text('CAR MODEL');
+                $('#backDiv').html('<button class="btn bg-green text-white float-end" id="backModelBtn">Back</button>');
+                $('.2d, #mainContainer').fadeIn();
+                $('#newModel').focus();
+
+            });
+            
+        });
+        $(document).on('click', '.nextBtnModels', function(){
+            var $this = $(this);
+            idmodel = $this.data('id');
+            var model = $this.data('model');
+            $('#mainContainer,.2d').fadeOut(function(){
+                getModelYears(idmodel);
+                $('#modelUpdate').val(model);
+                $('#idmodel,#id_model').val(idmodel);
+                $('#header').text('MODEL YEARS')
+                $('.3d, #mainContainer').fadeIn();                
+                $('#backDiv').html('<button class="btn bg-green text-white float-end" id="backYearBtn">Back</button>')
+            });
+            
+        });
+        $(document).on('click','#backModelBtn',function(){
+            $('#mainContainer, .2d, #backModelBtn').fadeOut(function(){
+                getCarMakes();                
+                $('#header').text('CAR MAKE')
+                $('#mainContainer,#newCarForm').fadeIn();               
+            });           
+        });
+        $(document).on('click','#backYearBtn',function(){
+            $('#mainContainer, .3d, #backYearBtn').fadeOut(function(){
+                getcarmodels(idmake);                
+                $('#header').text('CAR MODEL');
+                $('#backDiv').html('<button class="btn bg-green text-white float-end" id="backModelBtn">Back</button>');
+                $('#mainContainer,.2d').fadeIn();     
+                $('#newModel').focus();          
+            });  
+
+        });
+        $(document).on('click','.deleteYearBtn',function(){
+            var $this = $(this);
+            idyeardelete = $this.data('id');
+            var year = $this.data('year');
+            $('#modalTitle').text('Delete Year');
+            var text = `Are you sure you want to delete ${year} from the list?`;
+            $('.modal-body').text(text);
+            $('#btnConfirmDelete').data('option','year');
+            myModal.show();            
+        });
+        $(document).on('click','.deleteModelBtn',function(){
+            var $this = $(this);
+            idmodeldelete = $this.data('id');
+            var model = $this.data('model');
+            $('#modalTitle').text('Delete Model');
+            var text = `Are you sure you want to delete ${model} from the list?`;
+            $('.modal-body').text(text);
+            $('#btnConfirmDelete').data('option','model');
+            myModal.show();            
+        });
+        $(document).on('click','.deleteMakeBtn',function(){
+            var $this = $(this);
+            idmakedelete = $this.data('id');
+            var make = $this.data('make');
+            $('#modalTitle').text('Delete Make');
+            var text = `Are you sure you want to delete ${make} from the list?`;
+            $('.modal-body').text(text);
+            $('#btnConfirmDelete').data('option','make');
+            myModal.show();            
+        });
+        $(document).on('click','#btnConfirmDelete',function(){
+            var option = $(this).data('option');
+            if(option == 'year')
+            {
+                post('/deletemodelyear', {id:idyeardelete}, getModelYears, idmodel);
+                myModal.hide();
+            }
+            else if(option == 'model')
+            {
+                post('/deletecarmodel', {id:idmodeldelete}, getcarmodels, idmake);
+                myModal.hide();
+            }
+            else
+            {
+                post('/deletecarmake', {id:idmakedelete}, getCarMakes);
+                myModal.hide();
+            }
+        });
+        function populateCarMakes(data){
+            $('#mainContainer').find(".fila:not(:first)").remove();
+            $(data).each(function(i,item){
+                var row = `<div class="w-100 mx-auto fila">\
+                <div class="row align-items-end">\
+                    <div class="col-9">\
+                        <div name="make">${item.make}</div>\
+                    </div>\
+                    <div class="col-3">
+                        <div class="d-flex justify-content-around">
+                            <div class="fs-5 text-success nextBtn d-inline-block" data-id="${item.id}" data-make="${item.make}" data-bs-toggle="tooltip" data-bs-placement="top" title="Models"> <i class="fa-solid fa-angle-right"></i> </div>\
+                            <div class="fs-5 text-danger deleteMakeBtn d-inline-block" data-id="${item.id}" data-make="${item.make}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"> <i class="fa-solid fa-trash-can"></i> </div>\
+                        </div>
+                    </div>
+                   
+                    
+                </div>\
+                <hr>\
+            </div>`;
+            $('#mainContainer').append(row);
+            });
+            $('#make').val('').focus();  
+            refreshtooltips();  
+        }
+        
+        function populateCarModels(data){
+            $('#mainContainer').find(".fila:not(:first)").remove();
+            $(data).each(function(i,item){
+                var row = `<div class="w-100 mx-auto fila">\
+                <div class="row align-items-end">\
+                    <div class="col-9">\
+                        <div name="model">${item.car_model}</div>\
+                    </div>\
+                    <div class="col-3">
+                        <div class="d-flex justify-content-around">
+                            <div class="fs-5 text-success nextBtnModels d-inline-block" data-id="${item.id}" data-model="${item.car_model}" data-bs-toggle="tooltip" data-bs-placement="top" title="Years"> <i class="fa-solid fa-angle-right"></i> </div>\
+                            <div class="fs-5 text-danger deleteModelBtn d-inline-block" data-id="${item.id}" data-model="${item.car_model}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"> <i class="fa-solid fa-trash-can"></i> </div>\
+                        </div>
+                    </div>                     
+                </div>\
+                <hr>\
+            </div>`;
+            $('#mainContainer').append(row);
+            });
+            $('#newModel').val('').focus(); 
+            refreshtooltips(); 
+        }
+        
+        function getModelYears(idmodel){
+            $.ajax({
+                url: "/getyearsmodel",
+                type: 'POST',
+                async: false,
+                dataType: 'json',
+                data:{
+                    idmodel : idmodel
+                },
+                success: function (data) {                    
+                    populateModelYears(data)
+                    
+                },
+            });
+        }
+        
+        function populateModelYears(data){
+            $('#mainContainer').find(".fila:not(:first)").remove();
+            $(data).each(function(i,item){
+                var row = `<div class="w-100 mx-auto fila">\
+                <div class="row align-items-end">\
+                    <div class="col-9">\
+                        <div name="year">${item.year}</div>\
+                    </div>\
+                    <div class="col-3">
+                        <div class="d-flex justify-content-around">
+                            <div class="fs-5 text-danger deleteYearBtn d-inline-block" data-id="${item.id}" data-year="${item.year}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fa-solid fa-trash-can"></i></div>\
+                        </div>
+                    </div>   
+                </div>\
+                <hr>\
+            </div>`;
+            $('#mainContainer').append(row);
+            });
+            $('#id_year').prop('selectedIndex', 0).focus();  
+            refreshtooltips();
+            validateYearForm();
+        }
+        
+        function submit(url, form, callback, id){
+            $.ajax({
+                url:url,
+                type: "POST",
+                async: false,
+                dataType: "json",
+                data: $(form).serialize(),
+                success: function(response){
+                    if (response){
+                        if (id === undefined)
+                        {
+                            callback();
+                        }
+                        else{
+                            callback(id)
+                        }
+                    }
+                }
+            })
+        }
+        function post(url, data, callback, id){
+            $.ajax({
+                url:url,
+                type: "POST",
+                async: false,
+                dataType: "json",
+                data: data,
+                success: function(response){
+                    if (response){
+                        if (id === undefined)
+                        {
+                            callback();
+                        }
+                        else{
+                            callback(id)
+                        }
+                    }
+                }
+            }) 
+        }
+        function getCarMakes(){
+            $.ajax({
+                url: "/getcarmakes",
+                type: 'GET',
+                async: false,
+                dataType: 'json',
+                          
+                success: function (data) {                    
+                    populateCarMakes(data)
+                    
+                },
+            });
+        } 
+        function getcarmodels(id){
+            
+            $.ajax({
+                url: "/getcarmodels",
+                type: 'POST',
+                async: false,
+                dataType: 'json',
+                data:{
+                    carmakeid : id
+                },
+                success: function (data) {                    
+                    populateCarModels(data)
+                    
+                },
+            });
+        }
+        function fadeinfadeoutModel(){
+            $('#mainContainer, .3d').fadeOut(function(){
+                getcarmodels(idmake);                
+                $('#makeUpdate').val(make);
+                $('#id,#carmakeid').val(idmake);
+                $('#header').text('CAR MODEL')
+                $('#mainContainer, .2d').fadeIn();
+                $('#newModel').focus();
+            });
+        }
+        function fadeinfadeoutMake(){
+            $('#mainContainer, #newCarModelForm, #editCarMakeForm').fadeOut(function(){
+                            getCarMakes()                           
+                            $('#newCarForm, #mainContainer').fadeIn();                
+                        });
+        }
+        $('[rel="tooltip"]').on('click', function () {
+            $(this).tooltip('hide')
+        })
+    </script>
+{% endblock %}

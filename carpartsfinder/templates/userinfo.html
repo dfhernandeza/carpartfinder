@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://use.fontawesome.com/6e865d9abf.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="/static/functions.js"></script>
+        <style>
+            .icon{
+                width: 16px!important;
+                height: 16px!important;
+            }
+            @media(min-width:576px){
+                .top-div{
+                    height: 22%;
+                    
+                }
+                .search{
+                    width: 75%!important;
+                }
+                .options{
+                    width: 75%!important;
+                    padding-right: 3rem!important ;
+                    padding-left: 3rem!important ;
+                }
+                .cont-results{
+                    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                    height: 12rem;
+                    border-radius: 8px;
+                    
+                    margin-left:auto;
+                    margin-right: auto ;
+                    color: grey;
+                    font-family:Verdana, Geneva, Tahoma, sans-serif;
+                }
+                .picture{
+                    height: 70px;
+                    width: 70px;
+                    margin-right: auto;
+                    margin-left: auto;
+                }
+                .user-info-row{
+                    height: 4rem;
+                }
+
+            }
+            @media (max-width:576px){
+                .cont-results{
+                    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                    height: 6.5rem;
+                    border-radius: 8px;
+                    margin-left:auto;
+                    margin-right: auto ;
+                    font-size: x-small;
+                    color: grey;
+                    font-family:Verdana, Geneva, Tahoma, sans-serif;
+                }
+                .user-info-row{
+                    height: 4rem;
+                    font-size: x-small;
+                }
+                .picture{
+                    height: 35px;
+                    width: 35px;
+                }
+                .top-div{
+                    height: 30%;
+                    
+                }
+                .search{
+                    width: 95%!important; 
+                }
+                .options{
+                    width: 95%!important;
+                    padding-right: 1rem!important ;
+                    padding-left: 1rem!important ;
+                }
+                select{
+                    font-size: x-small;
+                }
+                .compatibility{
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+                    font-size: 7px;
+                    font-weight: bold;
+                }
+            }
+         
+        </style>
+    </head>
+    <div class="row shadow-border m-3 rounded-12 p-4">
+        <div class="col-6 font-grey top-border-grey left-border-grey user-info-row">
+            <div class="row h-100 align-content-center">
+               <div class="col-12">
+                <i class="fa-solid fa-user-astronaut"> Seller Name</i>
+               </div> 
+            </div>            
+        </div>
+        <div class="col-6 font-grey top-border-grey left-border-grey right-border-grey user-info-row">
+            <div class="row h-100 align-content-center">
+                <div class="col-12">
+                    {{userinfo.first_name + " " + userinfo.last_name}}
+                </div> 
+             </div>            
+        </div>
+        <div class="col-6 font-grey top-border-grey left-border-grey user-info-row">
+            <div class="row h-100 align-content-center">
+                <div class="col-12">
+                    <i class="fa-solid fa-phone"> Phone Number </i>  
+                </div> 
+             </div>            
+        </div>
+        <div class="col-6 font-grey top-border-grey left-border-grey right-border-grey user-info-row">
+            <div class="row h-100 align-content-center">
+                <div class="col-12">
+                    <a href="tel:{{userinfo.phone_number}}">{{userinfo.phone_number}}</a> 
+                </div> 
+             </div>            
+        </div>
+        <div class="col-6 font-grey top-border-grey left-border-grey bottom-border-grey user-info-row">
+            <div class="row h-100 align-content-center">
+                <div class="col-12">
+                    <i class="fa-solid fa-map-location-dot">  Location</i> 
+                </div> 
+             </div>             
+        </div>
+        <div class="col-6 font-grey top-border-grey left-border-grey bottom-border-grey right-border-grey user-info-row">
+            <div class="row h-100 align-content-center">
+                <div class="col-12">
+                    <a href="{{'https://www.google.com/maps/dir/?api=1&destination=' + userinfo.address }}">{{userinfo.address}} </a>
+                </div> 
+             </div>              
+        </div>
+        <div class="col-12 mt-3 mb-3 fs-2">
+            <div class="d-flex align-items-center">
+                <img class="icon" src="/static/disc-brake.png">
+                <div class="font-grey ms-2">Items</div>
+            </div>
+        </div>
+       
+        {% for part in userinfo.useritems %}
+        <div class="cont-results container-fluid p-2 mb-4">
+            <div class="row h-100">
+                <div class="col-6 fw-bold h-100">
+                    <div class="row h-50">
+                        <div class="col-3">
+                            <div class="d-flex w-100 h-100 justify-content-center">
+                                <img class="picture" src="{{part.pictures[0].url}}">
+                            </div>                                                           
+                        </div>
+                        <div class="col-9">
+                            <div class="row h-25">
+                                <div class="col-12"><a href="/partdetails?id={{part.id}}">{{ part.part_name }}</a></div>
+                            </div>
+                            <div class="row h-25">
+                                <div class="col-12 text-success">{{ "${:,.2f}".format(part.price) }} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row h-50">
+                        <div class="col-12 h-100" style="font-size: x-small;">
+                            <div class="h-100 overflow-auto">
+                                {{part.description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 h-100">
+                    <div class="h-25 fw-bolder text-danger">Compatibility</div>
+                    <div class="h-50 overflow-auto">
+                        
+                        <ul class="compatibility">
+                            {% for item in part.compatibility %}
+                        <li>
+                            {{ item.make + " / " + item.car_model + " / " + item.year }}
+                        </li>
+                            {% endfor %}
+                        </ul>
+                    </div>                   
+                </div>
+            </div> 
+        </div>
+        {% endfor %}
+    </div>
+    
+   
+{% endblock %}

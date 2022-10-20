@@ -1,0 +1,167 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Posts
+{% endblock %}
+
+{% block main %}
+    <head>
+        <style>
+            @media (max-width:576px){
+                tr{
+                    height: 1px;
+                    max-height: 3rem;
+                }
+              td{
+                  font-size: xx-small;
+                  height: inherit;
+              }
+              table{
+                  table-layout: fixed;
+              }
+              .btn{
+                  padding-top: 0px;
+                  padding-bottom: 0px;
+                  padding-left: 3px;
+                  padding-right: 3px;
+              } 
+              .fila{
+                  height: 100px!important;
+              }
+              .descrp{
+                  width: 30%;
+              }
+              .small{
+                  display: inline-block;
+              }
+              .big{
+                  display: none;
+              }
+            } 
+            @media(min-width:576px){
+                tr{
+                    height: 1px;
+                }
+                td{
+                    height: inherit;
+                    height: inherit;
+                }
+                .fila{
+                    height: 120px!important;
+                }
+                .descrp{
+                    width: 40%;
+                }
+                .big{
+                    display: inline-block;
+                }
+                .small{
+                    display: none;
+                }
+            }
+        </style>  
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="/static/functions.js"></script>
+    </head>
+    <div class="p-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th class="descrp">
+                        Description
+                    </th>
+                    <th style="width: 20%;"></th>
+                </tr>
+            </thead>
+          
+            {% for item in list %}
+            <tr  class="fila">
+                <td>
+                    <div class="h-100 d-flex align-items-center">
+                     {{ item.date.split()[0] }}
+                    </div>
+                    
+                </td>
+                <td>
+                     <div class="h-100 d-flex align-items-center">
+                         {{ item.part_name }}
+                     </div>            
+                 </td>
+                 <td>
+                     <div class="h-100 d-flex align-items-center">
+                         {{ item.price }}
+                     </div>            
+                 </td>
+                     <td>
+                         <div class="h-100 overflow-auto">
+                             {{ item.description }}
+                         </div>
+                 
+                     </td>
+                     <td>
+                 
+                         <div class="h-100 d-flex align-items-center justify-content-around">
+                             <a href="/editpart?id={{item.id}}" class="btn btn-primary small" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="fa-solid fa-pen-to-square fa-xs"></i></a>
+                             <button data-name="{{item.part_name}}" data-id="{{item.id}}" class="btn btn-danger small delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fa-solid fa-trash-can fa-xs"></i></button>
+                             <a href="/editpart?id={{item.id}}" class="btn btn-primary big" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                             <button data-name="{{item.part_name}}" data-id="{{item.id}}" class="btn btn-danger big delete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                         </div>
+                       </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+  
+    <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Delete Post</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form method="post" action="/deletepost">
+                <input type="text" name="id" id="id" class="d-none">
+                <button type="submit" class="btn btn-primary" id="confirm">Confirm</button>
+              </form>
+             
+            </div>
+          </div>
+        </div>
+      </div>
+   
+   <script>
+
+       var id;
+       var myModal = new bootstrap.Modal(document.getElementById('modalDelete'), {
+           keyboard: false
+       });   
+        $(document).ready(function(){
+          $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+        $(document).on('click','.delete', function(){
+            var $this = $(this);
+            var name = $this.data('name')
+            id = $this.data('id');
+            $('.modal-body').text(`Are you sure you want to delete ${name} from your posts?`);
+            $('#id').val(id);
+            myModal.show();
+        });
+        $(document).on('click','#confirm', function(){
+
+        });
+   </script>
+{% endblock %}

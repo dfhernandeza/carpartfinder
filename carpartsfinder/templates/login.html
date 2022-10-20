@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <style>
+        body{
+            height: 100vh!important;
+        }
+        main{
+            height: 90%;
+        }
+        @media(min-width:768px){
+              nav{
+                  height: 10%;
+              }          
+        }
+        @media(max-width:768px){
+            
+        }
+    </style>
+    <form action="/login" method="post" class="text-center h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="email" name="email" placeholder="Email" type="text">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn bg-green text-white mx-auto" type="submit">Log In</button>
+                    </div>        
+                </div>
+            </div>
+            
+        </div>
+    </form>
+
+    
+{% endblock %}

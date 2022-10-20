@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    <head>
+        <style>
+            body{
+                background: rgb(43,40,40);
+                background: linear-gradient(37deg, rgba(43,40,40,1) 5%, rgba(226,1,241,1) 91%);
+            }
+            
+            .search{
+                height: 45px;
+            }
+            input:focus{
+                outline: none;
+            }
+            select{
+                border: none;
+                background-color: transparent;
+                color: white;
+            }
+            select:focus,:disabled{
+                outline: none;
+                color: white;
+            }
+            .margin-top-10{
+                margin-top: 10%;       
+            }
+            select option{
+                background-color: black;
+            }
+            @media(min-width:425px){
+                .top-div{
+                    height: 22%;
+                    
+                }
+                .search{
+                    width: 75%!important;
+                }
+                .options{
+                    width: 75%!important;
+                    padding-right: 3rem!important ;
+                    padding-left: 3rem!important ;
+                }
+               
+            }
+            @media (max-width:425px){
+                              
+                .search{
+                    width: 95%!important; 
+                }
+                .options{
+                    width: 95%!important;
+                    padding-right: 1rem!important ;
+                    padding-left: 1rem!important ;
+                }
+                select{
+                    font-size: x-small;
+                }
+               
+            }
+            body{
+                height: 100vh!important;
+            }
+            main{
+                height: 90%;
+            }
+            @media(min-width:768px){
+                  nav{
+                      height: 10%;
+                  }          
+            }
+            @media(max-width:768px){
+                
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://use.fontawesome.com/6e865d9abf.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="/static/jqueryui/jquery-ui.min.css">
+        <script src="/static/jqueryui/jquery-ui.min.js"></script>
+        <script src="/static/functions.js"></script>
+    </head>
+     
+        <form method="get" action="/search" id="searchForm" class="h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="search text bg-white rounded-pill border-0 w-75 p-2 mx-auto">               
+                            
+                                <i class="fa-solid fa-magnifying-glass mx-2"></i>
+                                <input class="border-0 w-75" placeholder="Search for car parts" name="q" id="q" autocomplete="off">
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between w-75 mx-auto px-5">
+                                <select name="make" id="make">
+                                    <option value="">- MAKE -</option>
+                                    {% for item in cars %}
+                                    <option value="{{ item.id }}">{{ item.make }}</option>
+                                    {% endfor %}
+                                </select> 
+                                <select name="model" id="model" disabled>
+                                    <option value="">- MODEL -</option>
+                                    
+                                </select> 
+                                <select name="year" id="year" disabled>
+                                    <option value="">- YEAR -</option>
+                                   
+                                </select> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                
+                
+            </div>
+             
+            <input type="submit" hidden />
+        </form>
+     
+        <script>
+            $(document).ready(function(){
+                $.ajax({
+                    url:"/getautocomplete",
+                    type: "GET",
+                    async: false,
+                    dataType: "json",
+                    success: function(response){
+                        $('#q').autocomplete({
+                            source: response.map(a => a.part_name)
+                        });
+                    }
+                })
+    
+            });
+        </script>
+
+    
+{% endblock %}

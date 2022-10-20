@@ -1,0 +1,131 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .red
+{
+    color: #ea433b;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+.bg-green{
+    background-color: #00dfc0!important;
+}
+
+.label-user-info{
+    color:#939090;
+    font-size: smaller;
+}
+.w-90{
+    width: 90%!important;
+}
+.user-info-container{
+    border-style: solid;
+    border-width: thin;
+    border-radius: 8px;
+    border-color: lightgray;
+}
+.nextBtn,.nextBtnModels,.deleteMakeBtn,.deleteModelBtn,.deleteYearBtn:hover{
+    cursor: pointer;
+}
+.no-border{
+    border-style: none!important;
+    width: 100%;
+}
+.no-border:focus{
+    outline: none;
+}
+select.error{
+    border: 5px solid #ffdddd;
+}
+label.error{
+    color: #ea433b;
+}
+.partsInput{
+    border: none;
+    width: 100%;
+    border-bottom: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+}
+.partsInput:focus{
+    outline: none;
+}
+
+
+.shadow-border{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.font-grey{
+    color:#afafaf;
+}
+.rounded-12{
+    border-radius: 12px;
+}
+.bottom-border-grey{
+    border-bottom-style: solid;
+    border-bottom-color: #ccc9c9;
+    border-bottom-width: 1px;
+}
+.right-border-grey{
+    border-right-style: solid;
+    border-right-color: #ccc9c9;
+    border-right-width: 1px;
+}
+.top-border-grey{
+    border-top-style: solid;
+    border-top-color: #ccc9c9;
+    border-top-width: 1px;
+}
+.left-border-grey{
+    border-left-style: solid;
+    border-left-color: #ccc9c9;
+    border-left-width: 1px;
+}
+.border-grey{
+    border-style: solid;
+    border-color: #ccc9c9;
+    border-width: 1px;
+}
+
+.h-10{
+    height: 10%!important;
+}
+.h-15{
+    height: 15%!important;
+}
+.h-20{
+    height: 20%!important;
+}
+.h-30{
+    height: 30%!important;
+}
+.h-35{
+    height: 35%!important;
+}
+.h-16-6{
+    height: 16.66666667%!important;
+}
+.h-30-3{
+    height: 33.33333333%!important;
+}
+.h-5rem{
+    height: 5rem;
+}
+.h-4rem{
+    height: 4rem;
+}

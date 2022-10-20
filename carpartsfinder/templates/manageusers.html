@@ -1,0 +1,339 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    User Manager
+{% endblock %}
+
+{% block main %}
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js" integrity="sha512-37T7leoNS06R80c8Ulq7cdCDU5MNQBwlYoy1TX/WUsLFC2eYNqtKlV0QjH7r8JpG/S0GUMZwebnVFLPd6SU5yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/functions.js"></script>
+</head>
+    
+    <h5 class="mt-3 ms-2">Manage Users</h5>
+    <div class="container-fluid mt-4">
+        <form id="searchForm">
+            <div class="row">
+                <div class="col-8">
+                    <input class="form-control mb-2" id="email" name="email" type="text" autocomplete="off" placeholder="Enter a user email">
+                </div>
+                <div class="col-4">
+                    <input type="submit" class="btn bg-green text-white mb-3" value="Search" id="searchBtn">
+                </div>                
+              </div>
+        </form>      
+    </div>      
+    <div class="mx-auto w-100 p-4 user-info-container" id="mainContainer">
+        <div class="w-100 mx-auto">
+            <div class="row align-items-end">
+                <div class="col-10">
+                    <div class="form-label label-user-info">
+                        NAME
+                    </div>
+                    <div name="name"> 
+                    </div>
+                </div>
+                <div class="col-2 fs-5 text-success nextBtn" data-x="name">
+                    >
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div class="w-100 mx-auto">
+            
+            <div class="row align-items-end">
+                <div class="col-10">
+                    <div class="form-label label-user-info">
+                        EMAIL
+                    </div>
+                    <div name="email"> 
+                    </div>
+                </div>
+                <div class="col-2 fs-5 text-success nextBtn" data-x="email">
+                    >
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div class="w-100 mx-auto">
+            <div class="row align-items-end">
+                <div class="col-10">
+                    <div class="form-label label-user-info">
+                        ROL
+                    </div>
+                    <div name="rol"> 
+                    </div>
+                </div>
+                <div class="col-2 fs-5 text-success nextBtn" data-x="rol">
+                    >
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div class="w-100 mx-auto">
+            <div class="row align-items-end">
+                <div class="col-10">
+                    <div class="form-label label-user-info">
+                        PHONE NUMBER
+                    </div>
+                    <div name="phone_number">   
+                    </div>
+                </div>
+                <div class="col-2 fs-5 text-success nextBtn" data-x="phone_number">
+                    >
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div class="w-100 mx-auto">
+            <div class="row align-items-end">
+                <div class="col-10">
+                    <div class="form-label label-user-info">
+                        ADDRESS
+                    </div>
+                    <div name="address"> 
+                    </div>
+                </div>
+                <div class="col-2 fs-5 text-success nextBtn" data-x="address">
+                    >
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+    <div id="updateContainers">
+        <div class="mx-auto w-100 p-4 user-info-container" id="nameContainer" style="display: none;">
+            <form method="post" action="updatename" id="updateNameForm">
+                <input type="text" name="id" class="d-none">
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                            <div class="form-label label-user-info">
+                                FIRST NAME
+                            </div>
+                            <input class="no-border" type="text" name="first_name">                      
+                        </div>                
+                    </div>
+                    <hr>
+                </div>
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                            <div class="form-label label-user-info">
+                                LAST NAME
+                            </div>
+                            <input class="no-border" type="text" name="last_name">
+                        </div>               
+                    </div>            
+                    <hr>
+                </div>
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                           <input type="button" class="btn bg-green text-white mt-3" value="Update" id="btnSubmitName">
+                           <button type="button" class="btn bg-green text-white mt-3 btnBack">Back</button>
+                        </div>               
+                    </div>            
+                </div>
+            </form>          
+        </div>
+        <div class="mx-auto w-100 p-4 user-info-container" id="emailContainer" style="display: none;">
+            <form method="post" action="updateemail" id="updateEmailForm">
+                <input type="text" name="id" class="d-none">
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                            <div class="form-label label-user-info">
+                                EMAIL
+                            </div>
+                            <input class="no-border" type="text" name="email">                      
+                        </div>                
+                    </div>
+                    <hr>
+                </div>
+                <div class="w-100 mx-auto"> 
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                           <input type="button" class="btn bg-green text-white mt-3" value="Update" id="btnSubmitEmail">
+                           <button type="button" class="btn bg-green text-white mt-3 btnBack">Back</button>
+                        </div>               
+                    </div>            
+                </div>
+            </form>    
+        </div>
+        <div class="mx-auto w-100 p-4 user-info-container" id="rolContainer" style="display: none;">
+            <form method="post" action="updaterol" id="updateRolForm">
+                <input type="text" name="id" class="d-none">
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                            <div class="form-label label-user-info">
+                                ROL
+                            </div>
+                            <input class="no-border" type="text" name="rol">                      
+                        </div>                
+                    </div>
+                    <hr>
+                </div>
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                           <input type="button" class="btn bg-green text-white mt-3" value="Update" id="btnSubmitRol">
+                           <button type="button" class="btn bg-green text-white mt-3 btnBack">Back</button>
+                        </div>               
+                    </div>            
+                </div>
+            </form>   
+        </div>
+        <div class="mx-auto w-100 p-4 user-info-container" id="phoneNumberContainer" style="display: none;">
+            <form method="post" action="updatephonenumber" id="updatePhoneNumberForm">
+                <input type="text" name="id" class="d-none">
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                            <div class="form-label label-user-info">
+                                PHONE NUMBER
+                            </div>
+                            <input class="no-border" type="text" name="phone_number">                      
+                        </div>                
+                    </div>
+                    <hr>
+                </div>
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                           <input type="button" class="btn bg-green text-white mt-3" value="Update" id="btnSubmitPhoneNumber">
+                           <button type="button" class="btn bg-green text-white mt-3 btnBack">Back</button>
+                        </div>               
+                    </div>            
+                </div>
+            </form>
+        </div>
+        <div class="mx-auto w-100 p-4 user-info-container" id="addressContainer" style="display: none;">
+            <form method="post" action="updateaddress" id="updateAddressForm">
+                <input type="text" name="id" class="d-none">
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                            <div class="form-label label-user-info">
+                                Address
+                            </div>
+                            <input class="no-border" type="text" name="address">                      
+                        </div>                
+                    </div>
+                    <hr>
+                </div>
+                <div class="w-100 mx-auto">
+                    <div class="row align-items-end">
+                        <div class="col-12">
+                           <input type="button" class="btn bg-green text-white mt-3" value="Update" id="btnSubmitAddress">
+                           <button type="button" class="btn bg-green text-white mt-3 btnBack">Back</button>
+                        </div>               
+                    </div>            
+                </div>
+            </form> 
+        </div>
+    </div>
+    <script>
+        // Global Variables
+        var email;
+        var iduserGlobal;
+        // Validates search form
+        $('#searchForm').validate({
+            rules:{
+                email: {
+                    required: true,
+                    email: true}
+
+            },
+            submitHandler: function(){
+                email = $('#email').val();  
+                search(email);
+            }
+
+        })
+        // populates user info
+        function search(email = '', iduser = 0){
+            var data = {};
+            email == '' ? data.iduser = iduser : data.email = email;
+            $.ajax({
+                url: "/getUser",
+                type: 'GET',
+                async: false,
+                dataType: 'json',
+                data:data,           
+                success: function (response) {                    
+                    populateText($('#mainContainer') , response);
+                    populateInput($('#updateContainers') , response);
+                    iduserGlobal = response.id
+                },
+            });
+        }
+        // event handler for "Back" button.
+        $(document).on('click','.btnBack', function(){
+            $(this).closest('.user-info-container').fadeOut(function(){
+                $('#mainContainer').fadeIn();
+            });
+        });
+        // renders update form for the chosen option
+        $(document).on('click', '.nextBtn', function(){
+            var x = $(this).data('x');
+            $('#mainContainer').fadeOut(function(){
+                if(x == 'name'){
+                    $('#nameContainer').fadeIn();
+                }
+                else if (x == 'email'){
+                    $('#emailContainer').fadeIn();
+                }
+                else if (x == 'rol'){
+                    $('#rolContainer').fadeIn();
+                }
+                else if (x == 'phone_number'){
+                    $('#phoneNumberContainer').fadeIn();
+                }
+                else{
+                    $('#addressContainer').fadeIn();
+                }
+            });
+            
+        });
+        // event handler for name update submission
+        $(document).on('click', '#btnSubmitName', function(){
+            submit("/updatename", "#updateNameForm", '#nameContainer')
+        });
+        // event handler for email update submission
+        $(document).on('click', '#btnSubmitEmail', function(){
+            submit("/updateemail", "#updateEmailForm", '#emailContainer');
+        });
+        // event handler for rol update submission
+        $(document).on('click', '#btnSubmitRol', function(){
+            submit("/updaterol", "#updateRolForm", '#rolContainer');
+        });
+        // event handler for phone update submission
+        $(document).on('click', '#btnSubmitPhoneNumber', function(){
+            submit("/updatephonenumber", "#updatePhoneNumberForm", '#phoneNumberContainer');
+        });
+        // event handler for name address submission
+        $(document).on('click', '#btnSubmitAddress', function(){
+            submit("/updateaddress", "#updateAddressForm", '#addressContainer');
+        });
+        // submits a form and renders account info updated
+        function submit(url, form, container){
+            $.ajax({
+                url:url,
+                type: "POST",
+                async: false,
+                dataType: "json",
+                data: $(form).serialize(),
+                success: function(response){
+                    if (response){
+                        search('', iduserGlobal);                        
+                        $(container).fadeOut(function(){
+                            $('#mainContainer').fadeIn();
+                        });
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}
